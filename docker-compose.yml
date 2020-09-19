@@ -1,0 +1,59 @@
+version: "3"
+services:
+  server:
+    build: .
+    depends_on:
+      - redis
+    ports:
+      - 8080:8080
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+    volumes:
+      - ./package.json:/usr/src/app/package.json
+      - ./server.js:/usr/src/app/server.js
+      - ./src:/usr/src/app/src
+      - ./workers:/usr/src/app/workers
+      - ./tests/:/usr/src/app/tests/
+    command: nodemon server.js
+
+  worker-poll-queue:
+    build: .
+    depends_on:
+      - redis
+      - server
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+    volumes:
+      - ./package.json:/usr/src/app/package.json
+      - ./server.js:/usr/src/app/server.js
+      - ./src:/usr/src/app/src
+      - ./workers:/usr/src/app/workers
+      - ./tests/:/usr/src/app/tests/
+    command: nodemon ./workers/poll-queue.js
+
+  worker-watch-queue:
+    build: .
+    depends_on:
+      - redis
+      - server
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+    volumes:
+      - ./package.json:/usr/src/app/package.json
+      - ./server.js:/usr/src/app/server.js
+      - ./src:/usr/src/app/src
+      - ./workers:/usr/src/app/workers
+      - ./tests/:/usr/src/app/tests/
+    command: nodemon ./workers/watch-queue.js
+
+  redis:
+    image: redis:6
+    privileged: true
+    volumes:
+      - ./redis/data:/data

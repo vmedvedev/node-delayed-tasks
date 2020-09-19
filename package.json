@@ -1,0 +1,38 @@
+{
+  "name": "node_delayed_tasks",
+  "version": "1.0.0",
+  "description": "Delayed tasks implementation with Node.js and Redis.",
+  "author": "Vitalii Medvediev <vetalmedvedev@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "redis",
+    "lock",
+    "delay",
+    "task"
+  ],
+  "scripts": {
+    "start-poll-queue": "nodemon ./workes/poll-queue.js",
+    "start-watch-queue": "nodemon ./workes/watch-queue.js",
+    "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles --testTimeout=10000"
+  },
+  "dependencies": {
+    "jest": "^26.4.2",
+    "ioredis": "^4.17.3",
+    "uuid": "^8.3.0",
+    "bluebird": "^3.7.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vmedvedev/node-delayed-tasks.git"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}
