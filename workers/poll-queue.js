@@ -29,9 +29,10 @@ const pollQueue = async (redis, sleepTime) => {
                 const itemObj = JSON.parse(item);
                 identifier = itemObj.identifier;
                 queue = itemObj.queue;
-                const timeout = 10000; // 10 seconds
+                const acquireTimeout = 5000; // 5 seconds
+                const lockTimeout = 5000; // 5 seconds
                 // Get the lock for the item.
-                return await acquireLock(redis, identifier, timeout);
+                return await acquireLock(redis, identifier, acquireTimeout, lockTimeout);
             }
         }
     })

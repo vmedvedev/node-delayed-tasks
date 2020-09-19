@@ -11,7 +11,7 @@ const releaseLock = async (redis, lockname, identifier) => {
     try {
         const pipeline = redis.pipeline();
         const key = 'lock:' + lockname;
-
+        // Check and verify that we still have the lock.
         await pipeline.watch(key).get(key).exec()
         .then(async (result) => {
             if(result.length > 1 && result[1][1] == identifier) {

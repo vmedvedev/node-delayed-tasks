@@ -8,16 +8,20 @@ const sleep = require('./sleep');
  *
  * @param redis Redis client, instance of ioredis.
  * @param lockname Lock name.
- * @param timeout Timeout to wait lock in milliseconds.
+ * @param acquireTimeout Time to wait for lock in milliseconds.
+ * @param lockTimeout Expire time for lock in milliseconds.
  * @return Unique identifier of the lock.
  */
-const acquireLock = async (redis, lockname, timeout) => {
+const acquireLock = async (redis, lockname, acquireTimeout, lockTimeout) => {
+    acquireTimeout = (acquireTimeout === undefined) ? 10000 : acquireTimeout;
+    lockTimeout = (lockTimeout === undefined) ? 10000 : lockTimeout;
     const identifier = uuidv4();
-    const end = Date.now() + timeout;
+    const end = Date.now() + acquireTimeout;
     let isLocked = false;
 
     while (Date.now() < end) {
-        await redis.set('lock:' + lockname, identifier, "NX")
+        // Get the lock.
+        await redis.set('lock:' + lockname, identifier, "PX", lockTimeout, "NX")
         .then((result) => {
             isLocked = (result == null) ? false : true;
         });
